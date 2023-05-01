@@ -1,11 +1,11 @@
-package com.raovat.api.registration.token;
+package com.raovat.api.registration.confirmationtoken;
 
 import com.raovat.api.appuser.AppUser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter

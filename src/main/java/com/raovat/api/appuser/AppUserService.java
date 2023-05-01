@@ -1,12 +1,12 @@
 package com.raovat.api.appuser;
 
-import com.raovat.api.registration.token.ConfirmationToken;
-import com.raovat.api.registration.token.ConfirmationTokenService;
+import com.raovat.api.registration.confirmationtoken.ConfirmationToken;
+import com.raovat.api.registration.confirmationtoken.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ public class AppUserService implements UserDetailsService {
 
     private final static String USER_NOT_FOUND = "User with email %s not found";
     private final AppUserRepository appUserRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
 
     @Override
@@ -36,7 +36,7 @@ public class AppUserService implements UserDetailsService {
         if (userExists) {
             throw new IllegalStateException("Email already taken");
         }
-        String encodedPassword = bCryptPasswordEncoder
+        String encodedPassword = passwordEncoder
                 .encode(appUser.getPassword());
         appUser.setPassword(encodedPassword);
         appUserRepository.save(appUser);

@@ -1,4 +1,4 @@
-package com.raovat.api.registration.token;
+package com.raovat.api.registration.confirmationtoken;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
