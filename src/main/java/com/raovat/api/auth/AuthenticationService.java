@@ -3,6 +3,7 @@ package com.raovat.api.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.raovat.api.appuser.AppUser;
 import com.raovat.api.appuser.AppUserRepository;
+import com.raovat.api.appuser.AppUserRole;
 import com.raovat.api.config.JwtService;
 import com.raovat.api.token.Token;
 import com.raovat.api.token.TokenRepository;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,6 +27,25 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final TokenRepository tokenRepository;
     private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthenticationResponse register(RegisterRequest request) {
+        var user = AppUser.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .appUserRole(AppUserRole.USER)
+                .build();
+        var savedUser = appUserRepository.save(user);
+        var jwtToken = jwtService.generateToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+        saveUserToken(savedUser, jwtToken);
+        return AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
