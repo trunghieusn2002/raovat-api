@@ -1,16 +1,17 @@
-name: "publish npti"
+name: Deploy
 on:
   push:
     branches:
-      - master
+      - dev
 jobs:
-  build-node:
+  build:
     runs-on: ubuntu-latest
-    container:
-      image: node:16
     steps:
-      - run: node --version
-      - run: npm --version
       - uses: actions/checkout@v2
-      - run: npm install
-      - run: node app.js
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          branch: "dev"
+          heroku_api_key:  ${{ secrets.API_KEY }}
+          heroku_app_name: "ec-api"
+          heroku_email:  ${{ secrets.EMAIL }}
+          args: --skip-database-initialization
