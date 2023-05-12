@@ -1,10 +1,3 @@
 # RaoVat-API
 
-- {{domain}}/api/v1/registration
-  `{
-      "firstname": "",
-      "lastname": "",
-      "email": "",
-      "password": ""
-  }`
-- {{domain}}/api/v1/registration/confirm?token=
+- http://localhost:8080/swagger-ui/index.html

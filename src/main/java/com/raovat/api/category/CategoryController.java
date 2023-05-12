@@ -2,6 +2,7 @@ package com.raovat.api.category;
 
 import com.raovat.api.category.dto.CategoryDTO;
 import com.raovat.api.category.dto.CreateCategoryDTO;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/category")
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 public class CategoryController {
 
     private final CategoryService categoryService;
