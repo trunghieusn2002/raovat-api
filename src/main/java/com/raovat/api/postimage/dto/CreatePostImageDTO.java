@@ -1,4 +1,4 @@
-package com.raovat.api.image.dto;
+package com.raovat.api.postimage.dto;
 
 public record CreateImageDTO (String url) {
 }

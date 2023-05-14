@@ -1,6 +1,6 @@
-package com.raovat.api.image;
+package com.raovat.api.postimage;
 
-import com.raovat.api.image.dto.CreateImageDTO;
+import com.raovat.api.postimage.dto.CreateImageDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

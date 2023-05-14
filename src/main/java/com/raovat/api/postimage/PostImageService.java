@@ -1,6 +1,6 @@
-package com.raovat.api.image;
+package com.raovat.api.postimage;
 
-import com.raovat.api.image.dto.CreateImageDTO;
+import com.raovat.api.postimage.dto.CreateImageDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

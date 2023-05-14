@@ -1,4 +1,4 @@
-package com.raovat.api.image;
+package com.raovat.api.postimage;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,6 +23,7 @@ public class Image {
             generator = "image_sequence"
     )
     private Long id;
+    private Long postId;
     private String url;
 
     public Image(String url) {
