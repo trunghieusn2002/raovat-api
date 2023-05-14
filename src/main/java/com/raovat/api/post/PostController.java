@@ -1,13 +1,10 @@
 package com.raovat.api.post;
 
-import com.raovat.api.category.dto.CategoryDTO;
-import com.raovat.api.category.dto.CreateCategoryDTO;
 import com.raovat.api.post.dto.CreatePostDTO;
 import com.raovat.api.post.dto.PostDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
