@@ -1,5 +1,6 @@
 package com.raovat.api.config;
 
+import com.raovat.api.config.exception.MyAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,6 +42,9 @@ public class SecurityConfiguration {
                 .logoutUrl("/api/v1/auth/logout")
                 .addLogoutHandler(logoutHandler)
                 .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(new MyAuthenticationEntryPoint())
         ;
 
         return http.build();
