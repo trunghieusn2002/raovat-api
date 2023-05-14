@@ -1,5 +1,7 @@
 package com.raovat.api.post;
 
+import com.raovat.api.appuser.AppUser;
+import com.raovat.api.postimage.PostImage;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -27,7 +31,23 @@ public class Post {
     private Long id;
     private String title;
     private String content;
-    private Long imageId;
     private String description;
     private LocalDateTime postDate;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostImage> postImages = new ArrayList<>();
+
+    public void addPostImage(PostImage postImage) {
+        postImages.add(postImage);
+        postImage.setPost(this);
+    }
+
+    public void removePostImage(PostImage postImage) {
+        postImages.remove(postImage);
+        postImage.setPost(null);
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "app_user_id", referencedColumnName = "id")
+    private AppUser appUser;
 }

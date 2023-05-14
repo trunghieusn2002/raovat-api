@@ -2,6 +2,7 @@ package com.raovat.api.category;
 
 import com.raovat.api.category.dto.CategoryDTO;
 import com.raovat.api.category.dto.CreateCategoryDTO;
+import com.raovat.api.config.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class CategoryService {
     }
 
     public CategoryDTO update(Long id, CategoryDTO categoryDTO) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found id"));
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Not found id" + id));
         CategoryMapper.INSTANCE.updateEntity(category, categoryDTO);
         return CategoryMapper.INSTANCE.toDTO(categoryRepository.save(category));
     }

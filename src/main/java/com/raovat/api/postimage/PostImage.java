@@ -1,5 +1,7 @@
 package com.raovat.api.postimage;
 
+import com.raovat.api.image.Image;
+import com.raovat.api.post.Post;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,22 +13,28 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Image {
+public class PostImage {
     @Id
     @SequenceGenerator(
-            name = "image_sequence",
-            sequenceName = "image_sequence",
+            name = "post_image_sequence",
+            sequenceName = "post_image_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "image_sequence"
+            generator = "post_image_sequence"
     )
     private Long id;
-    private Long postId;
     private String url;
 
-    public Image(String url) {
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id", referencedColumnName = "id")
+    private Image image;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Post post;
+
+    public PostImage(String url) {
         this.url = url;
     }
 }

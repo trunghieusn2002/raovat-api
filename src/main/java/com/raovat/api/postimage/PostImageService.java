@@ -1,6 +1,6 @@
 package com.raovat.api.postimage;
 
-import com.raovat.api.postimage.dto.CreateImageDTO;
+import com.raovat.api.postimage.dto.CreatePostImageDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -8,30 +8,30 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ImageService {
+public class PostImageService {
 
-    private final ImageRepository imageRepository;
+    private final PostImageRepository postImageRepository;
 
-    public List<Image> getAll() {
-        return imageRepository.findAll();
+    public List<PostImage> getAll() {
+        return postImageRepository.findAll();
     }
 
-    public Image getById(Long id) {
-        return imageRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found id"));
+    public PostImage getById(Long id) {
+        return postImageRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found id"));
     }
 
-    public Image create(CreateImageDTO createImageDTO) {
-        return imageRepository.save(new Image(createImageDTO.url()));
+    public PostImage create(CreatePostImageDTO createPostImageDTO) {
+        return postImageRepository.save(new PostImage(createPostImageDTO.url()));
     }
 
-    public Image update(Long id, Image imageUpdate) {
-        Image image = imageRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found id"));
-        image.setUrl(imageUpdate.getUrl());
-        return imageRepository.save(image);
+    public PostImage update(Long id, PostImage postImageUpdate) {
+        PostImage postImage = postImageRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found id"));
+        postImage.setUrl(postImageUpdate.getUrl());
+        return postImageRepository.save(postImage);
     }
 
     public String delete(Long id) {
-        imageRepository.deleteById(id);
+        postImageRepository.deleteById(id);
         return "Success";
     }
 }
