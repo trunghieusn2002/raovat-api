@@ -1,6 +1,7 @@
 package com.raovat.api.category;
 
 
+import com.raovat.api.image.Image;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,10 @@ public class Category {
     )
     private Long id;
     private String name;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "image_id", referencedColumnName = "id")
+    private Image image;
 
     public Category(String name) {
         this.name = name;

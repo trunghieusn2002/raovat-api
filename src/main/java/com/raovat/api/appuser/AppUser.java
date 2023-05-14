@@ -1,5 +1,6 @@
 package com.raovat.api.appuser;
 
+import com.raovat.api.image.Image;
 import com.raovat.api.post.Post;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,6 +41,10 @@ public class AppUser implements UserDetails {
 
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
     private List<Post> posts;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "image_id", referencedColumnName = "id")
+    private Image image;
 
     public AppUser(String firstName,
                    String lastName,

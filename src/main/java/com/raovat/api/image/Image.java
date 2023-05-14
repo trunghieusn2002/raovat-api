@@ -1,5 +1,7 @@
 package com.raovat.api.image;
 
+import com.raovat.api.appuser.AppUser;
+import com.raovat.api.category.Category;
 import com.raovat.api.postimage.PostImage;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,6 +30,12 @@ public class Image {
 
     @OneToOne(mappedBy = "image")
     private PostImage postImage;
+
+    @OneToOne(mappedBy = "image")
+    private Category category;
+
+    @OneToOne(mappedBy = "image")
+    private AppUser appUser;
 
     public Image(String name, String url) {
         this.name = name;
