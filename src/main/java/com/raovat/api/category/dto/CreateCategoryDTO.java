@@ -1,4 +1,4 @@
 package com.raovat.api.category.dto;
 
-public record CreateCategoryDTO(String name) {
+public record CreateCategoryDTO(String name, Long imageId) {
 }

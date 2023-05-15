@@ -9,18 +9,17 @@ spring:
     password: 12345
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: true
   mail:
-    host: localhost
-    port: 1025
-    username: hello
-    password: hello
-
+    host: smtp.gmail.com
+    port: 587
+    username: trunghieusn2002@gmail.com
+    password: kqjogbmhcfqtodgw
     properties:
       mail:
         smtp:

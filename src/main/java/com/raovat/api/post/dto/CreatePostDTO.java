@@ -1,4 +1,6 @@
 package com.raovat.api.post.dto;
 
-public record CreatePostDTO (String title, String description, double price, String address) {
+import java.util.List;
+
+public record CreatePostDTO (String title, String description, double price, String address, Long categoryId, List<Long> imageIds) {
 }

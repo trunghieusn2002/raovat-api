@@ -13,11 +13,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CategoryService {
 
+    private final static String CATEGORY_NOT_FOUND = "Category with id %s not found";
     private final CategoryRepository categoryRepository;
 
-    public String create(CreateCategoryDTO createCategoryDTO) {
-        categoryRepository.save(CategoryMapper.INSTANCE.toEntity(createCategoryDTO));
-        return "Success";
+    public CategoryDTO create(CreateCategoryDTO createCategoryDTO) {
+        return CategoryMapper.INSTANCE.toDTO(
+                categoryRepository.save(CategoryMapper.INSTANCE.toEntity(createCategoryDTO))
+        );
     }
 
     public List<CategoryDTO> getAll() {
@@ -36,7 +38,11 @@ public class CategoryService {
     }
 
     public CategoryDTO getById(Long id) {
-        return CategoryMapper.INSTANCE
-                .toDTO(categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found id")));
+        return CategoryMapper.INSTANCE .toDTO(categoryRepository.findById(id)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(String.format(CATEGORY_NOT_FOUND, id))
+                        )
+        );
     }
+
 }

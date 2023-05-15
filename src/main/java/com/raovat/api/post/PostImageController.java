@@ -18,12 +18,12 @@ public class PostImageController {
     private final PostImageService postImageService;
 
     @GetMapping
-    public ResponseEntity<List<PostImage>> getAll() {
+    public ResponseEntity<List<PostImageDTO>> getAll() {
         return ResponseEntity.ok(postImageService.getAll());
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<PostImage> getById(@PathVariable Long id) {
+    public ResponseEntity<PostImageDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(postImageService.getById(id));
     }
 

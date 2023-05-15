@@ -36,6 +36,7 @@ public class Post {
     private String address;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<PostImage> postImages = new ArrayList<>();
 
     public void addPostImage(PostImage postImage) {
