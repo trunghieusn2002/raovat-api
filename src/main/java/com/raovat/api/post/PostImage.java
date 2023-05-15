@@ -1,7 +1,6 @@
 package com.raovat.api.post;
 
 import com.raovat.api.image.Image;
-import com.raovat.api.post.Post;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

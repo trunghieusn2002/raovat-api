@@ -1,5 +1,6 @@
 package com.raovat.api.appuser;
 
+import com.raovat.api.appuser.dto.AppUserDTO;
 import com.raovat.api.registration.confirmationtoken.ConfirmationToken;
 import com.raovat.api.registration.confirmationtoken.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
@@ -59,5 +60,17 @@ public class AppUserService implements UserDetailsService {
     public AppUser findByEmail(String email) {
         return appUserRepository.findByEmail(email).orElseThrow(() ->
                 new UsernameNotFoundException(String.format(USER_NOT_FOUND, email)));
+    }
+
+    public AppUserDTO getByEmail(String email) {
+        return AppUserMapper.INSTANCE.toDTO(findByEmail(email));
+    }
+
+    public AppUserDTO update(String email, AppUserDTO appUserDTO) {
+        AppUser appUser = findByEmail(email);
+        AppUserMapper.INSTANCE.updateEntity(appUser, appUserDTO);
+        return AppUserMapper.INSTANCE.toDTO(
+                appUserRepository.save(appUser)
+        );
     }
 }
