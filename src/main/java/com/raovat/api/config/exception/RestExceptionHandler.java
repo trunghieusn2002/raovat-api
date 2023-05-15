@@ -37,6 +37,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         body.put("Timestamp", LocalDateTime.now());
         body.put("Message", exception.getMessage());
 
-        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<Object> handleDuplicateResourceException(DuplicateResourceException exception) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("Timestamp", LocalDateTime.now());
+        body.put("Message", exception.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 }

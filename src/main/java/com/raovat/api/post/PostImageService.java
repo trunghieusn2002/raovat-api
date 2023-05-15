@@ -32,7 +32,7 @@ public class PostImageService {
     public PostImageDTO create(CreatePostImageDTO createPostImageDTO) {
         return PostImageMapper.INSTANCE.toDTO(postImageRepository.save(
                 PostImage.builder()
-                        .image(imageService.getById(createPostImageDTO.imageId()))
+                        .image(imageService.findById(createPostImageDTO.imageId()))
                         .post(
                                 Post.builder()
                                         .id(createPostImageDTO.postId())

@@ -136,7 +136,7 @@ public class ImageService {
         );
     }
 
-    public Image getById(Long id) {
+    public Image findById(Long id) {
         return imageRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(String.format(IMAGE_NOT_FOUND, id)));

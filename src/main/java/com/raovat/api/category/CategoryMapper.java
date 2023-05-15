@@ -2,15 +2,14 @@ package com.raovat.api.category;
 
 import com.raovat.api.category.dto.CategoryDTO;
 import com.raovat.api.category.dto.CreateCategoryDTO;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import com.raovat.api.image.ImageMapper;
+import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Mapper
+@Mapper(uses = ImageMapper.class)
 public interface CategoryMapper {
 
     CategoryMapper INSTANCE = Mappers.getMapper(CategoryMapper.class);
@@ -28,5 +27,8 @@ public interface CategoryMapper {
 
     List<Category> toEntities(List<CategoryDTO> categoryDTOs);
 
-    Category updateEntity(@MappingTarget Category category, CategoryDTO categoryDTO);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "image", ignore = true)
+    void updateEntity(@MappingTarget Category category, CategoryDTO categoryDTO);
 }
