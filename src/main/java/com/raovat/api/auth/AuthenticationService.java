@@ -5,6 +5,7 @@ import com.raovat.api.appuser.AppUser;
 import com.raovat.api.appuser.AppUserRepository;
 import com.raovat.api.appuser.AppUserRole;
 import com.raovat.api.config.JwtService;
+import com.raovat.api.config.exception.EmailAlreadyExistException;
 import com.raovat.api.token.Token;
 import com.raovat.api.token.TokenRepository;
 import com.raovat.api.token.TokenType;
@@ -39,6 +40,12 @@ public class AuthenticationService {
                 .locked(false)
                 .enabled(true)
                 .build();
+        boolean userExists = appUserRepository
+                .findByEmail(user.getEmail())
+                .isPresent();
+        if (userExists) {
+            throw new EmailAlreadyExistException("Email already taken");
+        }
         var savedUser = appUserRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);

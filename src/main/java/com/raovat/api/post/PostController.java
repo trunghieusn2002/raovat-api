@@ -42,4 +42,9 @@ public class PostController {
     public ResponseEntity<String> delete(@PathVariable Long id) {
         return ResponseEntity.ok(postService.delete(id));
     }
+
+    @GetMapping("/search")
+    public List<PostDTO> searchPostsByTitle(@RequestParam("title") String title) {
+        return postService.searchPostsByTitle(title);
+    }
 }

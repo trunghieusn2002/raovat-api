@@ -58,4 +58,8 @@ public class PostService {
         postRepository.deleteById(id);
         return "Success";
     }
+
+    public List<PostDTO> searchPostsByTitle(String title) {
+        return PostMapper.INSTANCE.toDTOs(postRepository.findByTitleContaining(title));
+    }
 }
