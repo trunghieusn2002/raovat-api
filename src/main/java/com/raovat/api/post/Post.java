@@ -1,7 +1,7 @@
 package com.raovat.api.post;
 
 import com.raovat.api.appuser.AppUser;
-import com.raovat.api.postimage.PostImage;
+import com.raovat.api.category.Category;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +32,8 @@ public class Post {
     private String title;
     private String description;
     private LocalDateTime postDate;
+    private double price;
+    private String address;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImage> postImages = new ArrayList<>();
@@ -49,4 +51,8 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "app_user_id", referencedColumnName = "id")
     private AppUser appUser;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private Category category;
 }

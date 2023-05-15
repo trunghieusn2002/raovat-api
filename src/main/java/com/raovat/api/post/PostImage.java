@@ -1,4 +1,4 @@
-package com.raovat.api.postimage;
+package com.raovat.api.post;
 
 import com.raovat.api.image.Image;
 import com.raovat.api.post.Post;
@@ -25,7 +25,6 @@ public class PostImage {
             generator = "post_image_sequence"
     )
     private Long id;
-    private String url;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
@@ -33,8 +32,4 @@ public class PostImage {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
-
-    public PostImage(String url) {
-        this.url = url;
-    }
 }

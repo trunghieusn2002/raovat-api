@@ -2,15 +2,16 @@ package com.raovat.api.image;
 
 import com.raovat.api.appuser.AppUser;
 import com.raovat.api.category.Category;
-import com.raovat.api.postimage.PostImage;
+import com.raovat.api.post.PostImage;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Image {
@@ -28,13 +29,13 @@ public class Image {
     private String name;
     private String url;
 
-    @OneToOne(mappedBy = "image")
+    @OneToOne(mappedBy = "image", fetch = FetchType.LAZY)
     private PostImage postImage;
 
-    @OneToOne(mappedBy = "image")
+    @OneToOne(mappedBy = "image", fetch = FetchType.LAZY)
     private Category category;
 
-    @OneToOne(mappedBy = "image")
+    @OneToOne(mappedBy = "image", fetch = FetchType.LAZY)
     private AppUser appUser;
 
     public Image(String name, String url) {

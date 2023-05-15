@@ -1,6 +1,7 @@
-package com.raovat.api.postimage;
+package com.raovat.api.post;
 
-import com.raovat.api.postimage.dto.CreatePostImageDTO;
+import com.raovat.api.post.dto.CreatePostImageDTO;
+import com.raovat.api.post.dto.PostImageDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class PostImageController {
     }
 
     @PostMapping
-    public ResponseEntity<PostImage> create(@RequestBody CreatePostImageDTO createPostImageDTO) {
+    public ResponseEntity<PostImageDTO> create(@RequestBody CreatePostImageDTO createPostImageDTO) {
         return ResponseEntity.ok(postImageService.create(createPostImageDTO));
     }
 

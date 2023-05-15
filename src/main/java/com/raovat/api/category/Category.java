@@ -2,8 +2,12 @@ package com.raovat.api.category;
 
 
 import com.raovat.api.image.Image;
+import com.raovat.api.post.Post;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
@@ -28,6 +32,19 @@ public class Category {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private Image image;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts = new ArrayList<>();
+
+    public void addPost(Post post) {
+        posts.add(post);
+        post.setCategory(this);
+    }
+
+    public void removePost(Post post) {
+        posts.remove(post);
+        post.setCategory(null);
+    }
 
     public Category(String name) {
         this.name = name;

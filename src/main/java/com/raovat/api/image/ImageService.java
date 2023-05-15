@@ -1,10 +1,11 @@
 package com.raovat.api.image;
 
+import com.raovat.api.config.exception.ResourceNotFoundException;
 import com.raovat.api.image.dto.CreateImageDTO;
+import com.raovat.api.image.dto.ImageDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,9 +25,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ImageService {
 
+    private final static String IMAGE_NOT_FOUND = "Image with id %s not found";
     private final ImageRepository imageRepository;
 
-    public String uploadFileHeroku(HttpServletRequest request, MultipartFile file) throws IOException {
+    public ImageDTO uploadFileHeroku(HttpServletRequest request, MultipartFile file) throws IOException {
         Path uploadPath = Paths.get(System.getProperty("user.dir"), "uploads");
         String fileName = System.currentTimeMillis() + "-" + UUID.randomUUID() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
         // Kiểm tra nếu file là ảnh
@@ -60,15 +62,16 @@ public class ImageService {
             Path filePath = Paths.get(uploadPath.toString(), fileName);
             Files.write(filePath, fileData);
             String url = "rao-vat-api.herokuapp.com" + "/uploads/" + fileName;
-            imageRepository.save(new Image(fileName, url));
-            return url;
+            return ImageMapper.INSTANCE.toDTO(
+                    imageRepository.save(new Image(fileName, url))
+            );
         } else {
-            return "Failed";
+            return null;
         }
 
     }
 
-    public String uploadFileLocal(HttpServletRequest request, MultipartFile file) throws IOException {
+    public ImageDTO uploadFileLocal(HttpServletRequest request, MultipartFile file) throws IOException {
         Path uploadPath = Paths.get(System.getProperty("user.dir"), "uploads");
         String fileName = System.currentTimeMillis() + "-" + UUID.randomUUID() + "." + FilenameUtils.getExtension(file.getOriginalFilename());
         // Kiểm tra nếu file là ảnh
@@ -102,10 +105,11 @@ public class ImageService {
             Path filePath = Paths.get(uploadPath.toString(), fileName);
             Files.write(filePath, fileData);
             String url = (request.getRemoteAddr().equalsIgnoreCase("0:0:0:0:0:0:0:1") ? "localhost" : request.getRemoteAddr()) + ":" + request.getLocalPort() + "/uploads/" + fileName;
-            imageRepository.save(new Image(fileName, url));
-            return url;
+            return ImageMapper.INSTANCE.toDTO(
+                    imageRepository.save(new Image(fileName, url))
+            );
         } else {
-            return "Failed";
+            return null;
         }
 
     }
@@ -126,8 +130,15 @@ public class ImageService {
         }
     }
 
-    public String uploadLink(CreateImageDTO createImageDTO) {
-        imageRepository.save(new Image(createImageDTO.name(), createImageDTO.url()));
-        return "Success";
+    public ImageDTO uploadLink(CreateImageDTO createImageDTO) {
+        return ImageMapper.INSTANCE.toDTO(
+                imageRepository.save(new Image(createImageDTO.name(), createImageDTO.url()))
+        );
+    }
+
+    public Image findById(Long id) {
+        return imageRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(String.format(IMAGE_NOT_FOUND, id)));
     }
 }
