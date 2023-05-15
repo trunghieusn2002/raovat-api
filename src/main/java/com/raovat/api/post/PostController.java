@@ -3,6 +3,7 @@ package com.raovat.api.post;
 import com.raovat.api.post.dto.CreatePostDTO;
 import com.raovat.api.post.dto.PostDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +29,8 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<PostDTO> create(@RequestBody CreatePostDTO createPostDTO) {
-        return ResponseEntity.ok(postService.create(createPostDTO));
+    public ResponseEntity<PostDTO> create(HttpServletRequest request, @RequestBody CreatePostDTO createPostDTO) {
+        return ResponseEntity.ok(postService.create(request, createPostDTO));
     }
 
     @PatchMapping(path = "/{id}")
