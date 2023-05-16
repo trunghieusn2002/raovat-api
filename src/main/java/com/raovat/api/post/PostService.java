@@ -5,6 +5,7 @@ import com.raovat.api.appuser.AppUserService;
 import com.raovat.api.category.CategoryMapper;
 import com.raovat.api.category.CategoryService;
 import com.raovat.api.config.JwtService;
+import com.raovat.api.config.exception.ResourceNotFoundException;
 import com.raovat.api.image.Image;
 import com.raovat.api.post.dto.CreatePostDTO;
 import com.raovat.api.post.dto.PostDTO;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostService {
 
+    private final String POST_NOT_FOUND = "Post with id %s not found";
     private final JwtService jwtService;
     private final AppUserService appUserService;
     private final PostRepository postRepository;
@@ -33,7 +35,7 @@ public class PostService {
     }
 
     public PostDTO getById(Long id) {
-        return PostMapper.INSTANCE.toDTO(postRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found id")));
+        return PostMapper.INSTANCE.toDTO(findById(id));
     }
 
     public PostDTO create(HttpServletRequest request, CreatePostDTO createPostDTO) {
@@ -48,7 +50,7 @@ public class PostService {
         if (userEmail != null) {
             AppUser user = appUserService.findByEmail(userEmail);
             Post post = PostMapper.INSTANCE.toEntity(createPostDTO);
-            post.setCategory(CategoryMapper.INSTANCE.toEntity(categoryService.getById(createPostDTO.categoryId())));
+            post.setCategory(categoryService.findById(createPostDTO.categoryId()));
             post.setAppUser(user);
             post.setPostDate(LocalDateTime.now());
             createPostDTO.imageIds().forEach(id -> {
@@ -63,7 +65,7 @@ public class PostService {
     }
 
     public PostDTO update(Long id, PostDTO postDTO) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found id"));
+        Post post = findById(id);
         PostMapper.INSTANCE.updateEntity(post, postDTO);
         return PostMapper.INSTANCE.toDTO(postRepository.save(post));
     }
@@ -73,12 +75,19 @@ public class PostService {
         return "Success";
     }
 
+    public Post findById(Long id) {
+        return postRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(String.format(POST_NOT_FOUND, id)));
+    }
+
     public List<PostDTO> searchPostsByTitle(String title) {
-        return PostMapper.INSTANCE.toDTOs(postRepository.findByTitleContainingIgnoreCase(title));
+        return PostMapper.INSTANCE.toDTOs(postRepository
+                .findByTitleContainsIgnoreCaseAndPublishedIsTrue(title));
     }
 
     public List<PostDTO> searchPostsByUserId(Long userId) {
-        return PostMapper.INSTANCE.toDTOs(postRepository.findByAppUserId(userId));
+        return PostMapper.INSTANCE.toDTOs(postRepository
+                .findByAppUserIdAndPublishedIsTrue(userId));
     }
 
     public List<PostDTO> searchPostsByTitleAndUserId(String title, Long userId) {
@@ -92,6 +101,6 @@ public class PostService {
             return searchPostsByTitle(title);
         }
         return PostMapper.INSTANCE.toDTOs(postRepository
-                .findByTitleContainingIgnoreCaseAndAppUserId(title, userId));
+                .findByTitleContainsIgnoreCaseAndAppUserIdAndPublishedIsTrue(title, userId));
     }
 }

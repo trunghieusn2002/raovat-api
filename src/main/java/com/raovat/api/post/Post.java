@@ -34,6 +34,8 @@ public class Post {
     private LocalDateTime postDate;
     private double price;
     private String address;
+    @Builder.Default
+    private boolean published = false;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

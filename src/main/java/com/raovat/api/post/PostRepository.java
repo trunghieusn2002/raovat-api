@@ -9,9 +9,13 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    List<Post> findByTitleContainingIgnoreCase(String title);
-
-    List<Post> findByTitleContainingIgnoreCaseAndAppUserId(String title, Long userId);
-
     List<Post> findByAppUserId(Long userId);
+    List<Post> findByAppUserIdAndPublishedIsTrue(Long userId);
+
+    List<Post> findByTitleContainsIgnoreCase(String title);
+    List<Post> findByTitleContainsIgnoreCaseAndPublishedIsTrue(String title);
+
+    List<Post> findByTitleContainsIgnoreCaseAndAppUserId(String title, Long userId);
+    List<Post> findByTitleContainsIgnoreCaseAndAppUserIdAndPublishedIsTrue(String title, Long userId);
+
 }
