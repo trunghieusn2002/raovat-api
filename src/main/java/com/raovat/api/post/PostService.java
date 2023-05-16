@@ -103,4 +103,10 @@ public class PostService {
         return PostMapper.INSTANCE.toDTOs(postRepository
                 .findByTitleContainsIgnoreCaseAndAppUserIdAndPublishedIsTrue(title, userId));
     }
+
+    public PostDTO switchPostPublishStatus(Long id) {
+        Post post = findById(id);
+        post.setPublished(!post.isPublished());
+        return PostMapper.INSTANCE.toDTO(postRepository.save(post));
+    }
 }

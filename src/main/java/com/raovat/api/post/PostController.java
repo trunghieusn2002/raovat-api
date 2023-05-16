@@ -53,4 +53,9 @@ public class PostController {
                                                      @RequestParam(value = "userId", required = false) Long userId) {
         return postService.searchPostsByTitleAndUserId(title, userId);
     }
+
+    @PostMapping("/hide/{id}")
+    public ResponseEntity<PostDTO> switchPostPublishStatus(@PathVariable Long id) {
+        return ResponseEntity.ok(postService.switchPostPublishStatus(id));
+    }
 }
