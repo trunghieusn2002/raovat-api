@@ -68,4 +68,9 @@ public class PostController {
     public ResponseEntity<List<PostDTO>> searchByCategory(@RequestParam(value = "categoryId") Long categoryId) {
         return ResponseEntity.ok(postService.searchByCategory(categoryId));
     }
+
+    @GetMapping("/followed")
+    public ResponseEntity<List<PostDTO>> getByFollowed(HttpServletRequest request) {
+        return ResponseEntity.ok(postService.getByFollowed(request));
+    }
 }

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +29,7 @@ public class PostService {
     private final AppUserService appUserService;
     private final PostRepository postRepository;
     private final CategoryService categoryService;
-    private final PostImageService postImageService;
+    private final PostFollowerService postFollowerService;
 
     public List<PostDTO> getAll() {
         return PostMapper.INSTANCE.toDTOs(postRepository.findAll());
@@ -128,5 +129,27 @@ public class PostService {
 
     public List<PostDTO> searchByCategory(Long categoryId) {
         return PostMapper.INSTANCE.toDTOs(postRepository.findByCategoryIdAndPublishedIsTrue(categoryId));
+    }
+
+    public List<PostDTO> getByFollowed(HttpServletRequest request) {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String refreshToken;
+        final String userEmail;
+        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+            return null;
+        }
+        refreshToken = authHeader.substring(7);
+        userEmail = jwtService.extractUsername(refreshToken);
+        if (userEmail != null) {
+            AppUser appUser = appUserService.findByEmail(userEmail);
+            List<PostFollower> postFollowers = postFollowerService.findByAppUserEmail(userEmail);
+
+            List<Post> followedPosts = postFollowers.stream()
+                    .map(PostFollower::getPost)
+                    .collect(Collectors.toList());
+
+            return PostMapper.INSTANCE.toDTOs(followedPosts);
+        }
+        return null;
     }
 }

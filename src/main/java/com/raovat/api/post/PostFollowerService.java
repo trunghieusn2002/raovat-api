@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PostFollowerService {
@@ -44,5 +46,9 @@ public class PostFollowerService {
         }
 
         return null;
+    }
+
+    public List<PostFollower> findByAppUserEmail(String email) {
+        return postFollowerRepository.findByAppUserEmail(email);
     }
 }
