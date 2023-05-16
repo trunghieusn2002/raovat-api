@@ -58,4 +58,9 @@ public class PostController {
     public ResponseEntity<PostDTO> switchPostPublishStatus(@PathVariable Long id) {
         return ResponseEntity.ok(postService.switchPostPublishStatus(id));
     }
+
+    @GetMapping("/user")
+    public ResponseEntity<List<PostDTO>> getByUser(HttpServletRequest request) {
+        return ResponseEntity.ok(postService.getByUser(request));
+    }
 }

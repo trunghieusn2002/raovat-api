@@ -109,4 +109,20 @@ public class PostService {
         post.setPublished(!post.isPublished());
         return PostMapper.INSTANCE.toDTO(postRepository.save(post));
     }
+
+    public List<PostDTO> getByUser(HttpServletRequest request) {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String refreshToken;
+        final String userEmail;
+        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+            return null;
+        }
+        refreshToken = authHeader.substring(7);
+        userEmail = jwtService.extractUsername(refreshToken);
+        if (userEmail != null) {
+            List<Post> posts = postRepository.findByAppUserEmail(userEmail);
+            return PostMapper.INSTANCE.toDTOs(posts);
+        }
+        return null;
+    }
 }
