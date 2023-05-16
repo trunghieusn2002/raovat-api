@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -73,6 +74,24 @@ public class PostService {
     }
 
     public List<PostDTO> searchPostsByTitle(String title) {
-        return PostMapper.INSTANCE.toDTOs(postRepository.findByTitleContaining(title));
+        return PostMapper.INSTANCE.toDTOs(postRepository.findByTitleContainingIgnoreCase(title));
+    }
+
+    public List<PostDTO> searchPostsByUserId(Long userId) {
+        return PostMapper.INSTANCE.toDTOs(postRepository.findByAppUserId(userId));
+    }
+
+    public List<PostDTO> searchPostsByTitleAndUserId(String title, Long userId) {
+        if (title == null && userId == null) {
+            return getAll();
+        }
+        else if (title == null) {
+            return searchPostsByUserId(userId);
+        }
+        else if (userId == null) {
+            return searchPostsByTitle(title);
+        }
+        return PostMapper.INSTANCE.toDTOs(postRepository
+                .findByTitleContainingIgnoreCaseAndAppUserId(title, userId));
     }
 }

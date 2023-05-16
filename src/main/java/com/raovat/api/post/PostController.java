@@ -43,8 +43,14 @@ public class PostController {
         return ResponseEntity.ok(postService.delete(id));
     }
 
-    @GetMapping("/search")
+    /*@GetMapping("/search")
     public List<PostDTO> searchPostsByTitle(@RequestParam("title") String title) {
         return postService.searchPostsByTitle(title);
+    }*/
+
+    @GetMapping("/search")
+    public List<PostDTO> searchPostsByTitleAndUserId(@RequestParam(value = "title", required = false) String title,
+                                                     @RequestParam(value = "userId", required = false) Long userId) {
+        return postService.searchPostsByTitleAndUserId(title, userId);
     }
 }
