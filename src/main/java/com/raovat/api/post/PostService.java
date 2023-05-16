@@ -32,7 +32,7 @@ public class PostService {
     private final PostFollowerService postFollowerService;
 
     public List<PostDTO> getAll() {
-        return PostMapper.INSTANCE.toDTOs(postRepository.findAll());
+        return PostMapper.INSTANCE.toDTOs(postRepository.findAllByPublishedIsTrue());
     }
 
     public PostDTO getById(Long id) {

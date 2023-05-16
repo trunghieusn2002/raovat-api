@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
+    List<Post> findAllByPublishedIsTrue();
     List<Post> findByAppUserId(Long userId);
     List<Post> findByAppUserIdAndPublishedIsTrue(Long userId);
 
