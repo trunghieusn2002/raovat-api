@@ -63,4 +63,9 @@ public class PostController {
     public ResponseEntity<List<PostDTO>> getByUser(HttpServletRequest request) {
         return ResponseEntity.ok(postService.getByUser(request));
     }
+    
+    @GetMapping("/category")
+    public ResponseEntity<List<PostDTO>> searchByCategory(@RequestParam(value = "categoryId") Long categoryId) {
+        return ResponseEntity.ok(postService.searchByCategory(categoryId));
+    }
 }

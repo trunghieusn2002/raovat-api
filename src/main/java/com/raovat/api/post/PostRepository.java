@@ -14,6 +14,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findByAppUserEmail(String email);
 
+    List<Post> findByCategoryIdAndPublishedIsTrue(Long categoryId);
+
     List<Post> findByTitleContainsIgnoreCase(String title);
     List<Post> findByTitleContainsIgnoreCaseAndPublishedIsTrue(String title);
 

@@ -125,4 +125,8 @@ public class PostService {
         }
         return null;
     }
+
+    public List<PostDTO> searchByCategory(Long categoryId) {
+        return PostMapper.INSTANCE.toDTOs(postRepository.findByCategoryIdAndPublishedIsTrue(categoryId));
+    }
 }
