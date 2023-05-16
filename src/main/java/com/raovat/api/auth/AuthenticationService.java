@@ -124,4 +124,32 @@ public class AuthenticationService {
         });
         tokenRepository.saveAll(validUserTokens);
     }
+
+    public String changePassword(HttpServletRequest  request, ChangePasswordRequest changePasswordRequest) {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String refreshToken;
+        final String userEmail;
+        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+            return null;
+        }
+        refreshToken = authHeader.substring(7);
+        userEmail = jwtService.extractUsername(refreshToken);
+        if (userEmail != null) {
+            AppUser appUser = this.appUserRepository.findByEmail(userEmail)
+                    .orElseThrow();
+
+            String currentPassword = changePasswordRequest.currentPassword();
+            String newPassword = changePasswordRequest.newPassword();
+
+            if (passwordEncoder.matches(currentPassword, appUser.getPassword())) {
+                String encodedPassword = passwordEncoder.encode(newPassword);
+                appUser.setPassword(encodedPassword);
+                appUserRepository.save(appUser);
+                return "Password changed successfully.";
+            } else {
+                return "Incorrect current password.";
+            }
+        }
+        return null;
+    }
 }
