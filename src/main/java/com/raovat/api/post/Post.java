@@ -37,7 +37,7 @@ public class Post {
     private double price;
     private String address;
     @Builder.Default
-    private boolean published = false;
+    private boolean published = true;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
