@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -40,6 +42,16 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<PostImage> postImages = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_post_relation",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    @Builder.Default
+    private Set<AppUser> appUsers = new HashSet<>();
+
 
     public void addPostImage(PostImage postImage) {
         postImages.add(postImage);

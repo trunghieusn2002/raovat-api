@@ -8,9 +8,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+
+import java.util.*;
 
 @Data
 @Builder
@@ -34,6 +33,7 @@ public class AppUser implements UserDetails {
     private String lastName;
     private String email;
     private String password;
+    private String phone;
     @Enumerated(EnumType.STRING)
     private AppUserRole appUserRole;
     private Boolean locked;
@@ -45,6 +45,9 @@ public class AppUser implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private Image image;
+
+    @ManyToMany(mappedBy = "appUsers")
+    private Set<Post> followedPosts;
 
     public AppUser(String firstName,
                    String lastName,
