@@ -47,4 +47,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         body.put("Message", exception.getMessage());
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Object> handleIllegalStateException(IllegalStateException exception) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("Timestamp", LocalDateTime.now());
+        body.put("Message", exception.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -1,4 +1,4 @@
-package com.raovat.api.registration.confirmationtoken;
+package com.raovat.api.auth.resetpasswordtoken;
 
 import com.raovat.api.appuser.AppUser;
 import lombok.Getter;
@@ -12,17 +12,17 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Entity
-public class ConfirmationToken {
+public class ResetPasswordToken {
 
     @Id
     @SequenceGenerator(
-            name = "confirmation_token_sequence",
-            sequenceName = "confirmation_token_sequence",
+            name = "reset_password_token_sequence",
+            sequenceName = "reset_password_token_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "confirmation_token_sequence"
+            generator = "reset_password_token_sequence"
     )
     private Long id;
     @Column(nullable = false)
@@ -39,10 +39,10 @@ public class ConfirmationToken {
     )
     private AppUser appUser;
 
-    public ConfirmationToken(String token,
-                             LocalDateTime createAt,
-                             LocalDateTime expiresAt,
-                             AppUser appUser) {
+    public ResetPasswordToken(String token,
+                              LocalDateTime createAt,
+                              LocalDateTime expiresAt,
+                              AppUser appUser) {
         this.token = token;
         this.createAt = createAt;
         this.expiresAt = expiresAt;

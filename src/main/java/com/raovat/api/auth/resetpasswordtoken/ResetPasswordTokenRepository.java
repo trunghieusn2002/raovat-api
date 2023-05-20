@@ -1,5 +1,6 @@
-package com.raovat.api.registration.confirmationtoken;
+package com.raovat.api.auth.resetpasswordtoken;
 
+import org.aspectj.weaver.ast.Or;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,13 +11,15 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
-public interface ConfirmationTokenRepository
-        extends JpaRepository<ConfirmationToken, Long> {
-    Optional<ConfirmationToken> findByToken(String token);
+public interface ResetPasswordTokenRepository
+        extends JpaRepository<ResetPasswordToken, Long> {
+    Optional<ResetPasswordToken> findByToken(String token);
+
+    Optional<ResetPasswordToken> findByAppUserEmail(String email);
 
     @Transactional
     @Modifying
-    @Query("UPDATE ConfirmationToken c " +
+    @Query("UPDATE ResetPasswordToken c " +
             "SET c.confirmedAt = ?2 " +
             "WHERE c.token = ?1")
     int updateConfirmedAt(String token, LocalDateTime confirmedAt);
