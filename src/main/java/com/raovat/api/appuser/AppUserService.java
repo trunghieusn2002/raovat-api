@@ -82,19 +82,7 @@ public class AppUserService implements UserDetailsService {
     }
 
     public AppUserDTO get(HttpServletRequest request) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String refreshToken;
-        final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-            return null;
-        }
-        refreshToken = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(refreshToken);
-        if (userEmail != null) {
-            AppUser user = findByEmail(userEmail);
-            return AppUserMapper.INSTANCE.toDTO(user);
-        }
-        return null;
+        return AppUserMapper.INSTANCE.toDTO(getCurrentUser(request));
     }
 
     public AppUser getCurrentUser(HttpServletRequest request) {
