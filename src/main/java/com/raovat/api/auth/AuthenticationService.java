@@ -140,16 +140,10 @@ public class AuthenticationService {
 
     public String changePassword(HttpServletRequest  request, ChangePasswordRequest changePasswordRequest) {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String refreshToken;
-        final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-            return null;
-        }
-        refreshToken = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(refreshToken);
-        if (userEmail != null) {
-            AppUser appUser = this.appUserRepository.findByEmail(userEmail)
-                    .orElseThrow();
+        final String token = jwtService.extractToken(authHeader);
+        final String email = jwtService.extractUsername(token);
+        if (email != null) {
+            AppUser appUser = appUserService.findByEmail(email);
 
             String currentPassword = changePasswordRequest.currentPassword();
             String newPassword = changePasswordRequest.newPassword();

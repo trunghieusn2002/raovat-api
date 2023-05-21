@@ -5,7 +5,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,15 @@ public class JwtService {
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractToken(String authHeader) {
+        final String token;
+        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+            throw new IllegalStateException("Unauthorized");
+        }
+        token = authHeader.substring(7);
+        return token;
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

@@ -25,8 +25,8 @@ public class AppUserController {
         return ResponseEntity.ok(appUserService.getByEmail(email));
     }
 
-    @PatchMapping("/{email}")
-    public ResponseEntity<AppUserDTO> update(@PathVariable String email, AppUserDTO appUserDTO) {
-        return ResponseEntity.ok(appUserService.update(email, appUserDTO));
+    @PatchMapping()
+    public ResponseEntity<AppUserDTO> update(HttpServletRequest request, AppUserDTO appUserDTO) {
+        return ResponseEntity.ok(appUserService.update(request, appUserDTO));
     }
 }

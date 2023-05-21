@@ -1,6 +1,9 @@
 package com.raovat.api.appuser;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.raovat.api.appuser.dto.AppUserDTO;
+import com.raovat.api.auth.AuthenticationResponse;
+import com.raovat.api.auth.AuthenticationService;
 import com.raovat.api.config.JwtService;
 import com.raovat.api.auth.resetpasswordtoken.ResetPasswordToken;
 import com.raovat.api.auth.resetpasswordtoken.ResetPasswordTokenService;
@@ -70,8 +73,8 @@ public class AppUserService implements UserDetailsService {
         return AppUserMapper.INSTANCE.toDTO(findByEmail(email));
     }
 
-    public AppUserDTO update(String email, AppUserDTO appUserDTO) {
-        AppUser appUser = findByEmail(email);
+    public AppUserDTO update(HttpServletRequest request, AppUserDTO appUserDTO) {
+        AppUser appUser = getCurrentUser(request);
         AppUserMapper.INSTANCE.updateEntity(appUser, appUserDTO);
         return AppUserMapper.INSTANCE.toDTO(
                 appUserRepository.save(appUser)
@@ -92,5 +95,15 @@ public class AppUserService implements UserDetailsService {
             return AppUserMapper.INSTANCE.toDTO(user);
         }
         return null;
+    }
+
+    public AppUser getCurrentUser(HttpServletRequest request) {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String token = jwtService.extractToken(authHeader);
+        final String email = jwtService.extractUsername(token);
+        if (email == null) {
+            throw new IllegalStateException("Email is null");
+        }
+        return findByEmail(email);
     }
 }
