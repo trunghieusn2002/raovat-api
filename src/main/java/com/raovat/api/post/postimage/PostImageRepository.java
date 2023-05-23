@@ -1,4 +1,4 @@
-package com.raovat.api.post;
+package com.raovat.api.post.postimage;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

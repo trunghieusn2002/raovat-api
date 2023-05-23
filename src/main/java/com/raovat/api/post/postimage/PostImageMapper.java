@@ -1,4 +1,4 @@
-package com.raovat.api.post;
+package com.raovat.api.post.postimage;
 
 import com.raovat.api.post.dto.CreatePostDTO;
 import com.raovat.api.post.dto.CreatePostImageDTO;

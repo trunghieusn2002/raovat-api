@@ -1,6 +1,5 @@
-package com.raovat.api.post;
+package com.raovat.api.post.watchlist;
 
-import com.raovat.api.post.dto.PostFollowerDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1/post-follower")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
-public class PostFollowerController {
+public class WatchListController {
 
-    private final PostFollowerService postFollowerService;
+    private final WatchListService watchListService;
 
     @PostMapping("/{id}")
-    public ResponseEntity<PostFollowerDTO> switchPostFollowStatus(HttpServletRequest request, @PathVariable Long id) {
-        return ResponseEntity.ok(postFollowerService.switchPostFollowStatus(request, id));
+    public ResponseEntity<WatchListDTO> switchPostFollowStatus(HttpServletRequest request, @PathVariable Long id) {
+        return ResponseEntity.ok(watchListService.switchPostFollowStatus(request, id));
     }
 }

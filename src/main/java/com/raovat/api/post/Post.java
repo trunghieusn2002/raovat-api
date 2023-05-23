@@ -2,6 +2,7 @@ package com.raovat.api.post;
 
 import com.raovat.api.appuser.AppUser;
 import com.raovat.api.category.Category;
+import com.raovat.api.post.postimage.PostImage;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

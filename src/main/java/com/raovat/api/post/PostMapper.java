@@ -3,6 +3,7 @@ package com.raovat.api.post;
 import com.raovat.api.category.CategoryMapper;
 import com.raovat.api.post.dto.CreatePostDTO;
 import com.raovat.api.post.dto.PostDTO;
+import com.raovat.api.post.postimage.PostImageMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

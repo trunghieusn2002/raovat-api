@@ -1,6 +1,7 @@
-package com.raovat.api.post;
+package com.raovat.api.post.watchlist;
 
 import com.raovat.api.appuser.AppUser;
+import com.raovat.api.post.Post;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostFollower {
+public class WatchList {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

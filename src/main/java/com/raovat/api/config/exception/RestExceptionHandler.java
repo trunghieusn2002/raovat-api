@@ -19,7 +19,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.toString().substring(4),
                         exception.getMessage(),
-                        request.getRequestURI())
+                        request.getRequestURI()
+                )
         );
     }
 
@@ -30,7 +31,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.toString().substring(4),
                         exception.getMessage(),
-                        request.getRequestURI())
+                        request.getRequestURI()
+                )
         );
     }
 
@@ -41,7 +43,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.toString().substring(4),
                         exception.getMessage(),
-                        request.getRequestURI())
+                        request.getRequestURI()
+                )
         );
     }
 
@@ -52,7 +55,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.toString().substring(4),
                         exception.getMessage(),
-                        request.getRequestURI())
+                        request.getRequestURI()
+                )
         );
     }
 
@@ -63,7 +67,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.toString().substring(4),
                         exception.getMessage(),
-                        request.getRequestURI())
+                        request.getRequestURI()
+                )
         );
     }
 
@@ -75,7 +80,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.UNAUTHORIZED.value(),
                         HttpStatus.UNAUTHORIZED.toString().substring(4),
                         "Authentication failed at controller advice",
-                        request.getRequestURI())
+                        request.getRequestURI()
+                )
         );
     }
 
@@ -86,7 +92,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.toString().substring(4),
                         "Missing some field",
-                        request.getRequestURI())
+                        request.getRequestURI()
+                )
         );
     }
 }

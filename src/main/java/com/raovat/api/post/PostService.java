@@ -2,11 +2,13 @@ package com.raovat.api.post;
 
 import com.raovat.api.appuser.AppUser;
 import com.raovat.api.appuser.AppUserService;
-import com.raovat.api.category.CategoryMapper;
 import com.raovat.api.category.CategoryService;
 import com.raovat.api.config.JwtService;
 import com.raovat.api.config.exception.ResourceNotFoundException;
 import com.raovat.api.image.Image;
+import com.raovat.api.post.postimage.PostImage;
+import com.raovat.api.post.watchlist.WatchList;
+import com.raovat.api.post.watchlist.WatchListService;
 import com.raovat.api.post.dto.CreatePostDTO;
 import com.raovat.api.post.dto.PostDTO;
 import com.raovat.api.post.dto.PostPageDTO;
@@ -20,9 +22,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,7 +34,7 @@ public class PostService {
     private final AppUserService appUserService;
     private final PostRepository postRepository;
     private final CategoryService categoryService;
-    private final PostFollowerService postFollowerService;
+    private final WatchListService watchListService;
 
     public PostPageDTO getAll(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
@@ -150,10 +150,10 @@ public class PostService {
         userEmail = jwtService.extractUsername(refreshToken);
         if (userEmail != null) {
             AppUser appUser = appUserService.findByEmail(userEmail);
-            List<PostFollower> postFollowers = postFollowerService.findByAppUserEmail(userEmail);
+            List<WatchList> watchLists = watchListService.findByAppUserEmail(userEmail);
 
-            List<Post> followedPosts = postFollowers.stream()
-                    .map(PostFollower::getPost)
+            List<Post> followedPosts = watchLists.stream()
+                    .map(WatchList::getPost)
                     .collect(Collectors.toList());
 
             return PostMapper.INSTANCE.toDTOs(followedPosts);

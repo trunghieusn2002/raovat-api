@@ -1,7 +1,8 @@
-package com.raovat.api.post;
+package com.raovat.api.post.postimage;
 
 import com.raovat.api.config.exception.ResourceNotFoundException;
 import com.raovat.api.image.ImageService;
+import com.raovat.api.post.Post;
 import com.raovat.api.post.dto.CreatePostImageDTO;
 import com.raovat.api.post.dto.PostImageDTO;
 import lombok.RequiredArgsConstructor;
