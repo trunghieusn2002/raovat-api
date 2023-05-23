@@ -9,8 +9,13 @@ import com.raovat.api.config.exception.ResourceNotFoundException;
 import com.raovat.api.image.Image;
 import com.raovat.api.post.dto.CreatePostDTO;
 import com.raovat.api.post.dto.PostDTO;
+import com.raovat.api.post.dto.PostPageDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +36,11 @@ public class PostService {
     private final CategoryService categoryService;
     private final PostFollowerService postFollowerService;
 
-    public List<PostDTO> getAll() {
-        return PostMapper.INSTANCE.toDTOs(postRepository.findAllByPublishedIsTrue());
+    public PostPageDTO getAll(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Page<Post> posts = postRepository.findAllByPublishedIsTrue(pageable);
+        Page<PostDTO> postDTOPage = posts.map(PostMapper.INSTANCE::toDTO);
+        return new PostPageDTO(postDTOPage.getTotalPages(), postDTOPage);
     }
 
     public PostDTO getById(Long id) {
@@ -93,7 +101,7 @@ public class PostService {
 
     public List<PostDTO> searchPostsByTitleAndUserId(String title, Long userId) {
         if (title == null && userId == null) {
-            return getAll();
+            return null;//getAll();
         }
         else if (title == null) {
             return searchPostsByUserId(userId);

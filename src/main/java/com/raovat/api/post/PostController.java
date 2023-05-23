@@ -2,6 +2,7 @@ package com.raovat.api.post;
 
 import com.raovat.api.post.dto.CreatePostDTO;
 import com.raovat.api.post.dto.PostDTO;
+import com.raovat.api.post.dto.PostPageDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,12 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
-    public ResponseEntity<List<PostDTO>> getAll() {
-        return ResponseEntity.ok(postService.getAll());
+    public ResponseEntity<PostPageDTO> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "title") String sortBy
+    ) {
+        return ResponseEntity.ok(postService.getAll(page, size, sortBy));
     }
 
     @GetMapping(path = "/{id}")
