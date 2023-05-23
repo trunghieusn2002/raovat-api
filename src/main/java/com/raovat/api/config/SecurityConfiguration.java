@@ -21,6 +21,7 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
+    private final MyAuthenticationEntryPoint myAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -44,7 +45,7 @@ public class SecurityConfiguration {
                 .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
                 .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(new MyAuthenticationEntryPoint())
+                .authenticationEntryPoint(myAuthenticationEntryPoint)
         ;
 
         return http.build();

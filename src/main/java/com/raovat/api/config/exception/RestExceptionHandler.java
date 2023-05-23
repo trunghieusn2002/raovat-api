@@ -2,9 +2,11 @@ package com.raovat.api.config.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
@@ -54,5 +56,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         body.put("Timestamp", LocalDateTime.now());
         body.put("Message", exception.getMessage());
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseBody
+    public ResponseEntity<RestError> handleAuthenticationException(Exception ex) {
+
+        RestError re = new RestError(HttpStatus.UNAUTHORIZED.toString(),
+                "Authentication failed at controller advice");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(re);
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<RestError> handleNullPointerException(Exception ex) {
+        RestError re = new RestError(HttpStatus.BAD_REQUEST.toString(), "Missing some field");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(re);
     }
 }
