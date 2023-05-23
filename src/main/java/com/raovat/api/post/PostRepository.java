@@ -14,7 +14,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByPublishedIsTrue();
     Page<Post> findAllByPublishedIsTrue(Pageable pageable);
     List<Post> findByAppUserId(Long userId);
-    List<Post> findByAppUserIdAndPublishedIsTrue(Long userId);
+    Page<Post> findAllByAppUserIdAndPublishedIsTrue(Long userId, Pageable pageable);
 
     List<Post> findByAppUserEmail(String email);
 
@@ -26,4 +26,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByTitleContainsIgnoreCaseAndAppUserId(String title, Long userId);
     List<Post> findByTitleContainsIgnoreCaseAndAppUserIdAndPublishedIsTrue(String title, Long userId);
 
+    Page<Post> findAllByTitleContainsIgnoreCaseAndPublishedIsTrue(String title, Pageable pageable);
 }

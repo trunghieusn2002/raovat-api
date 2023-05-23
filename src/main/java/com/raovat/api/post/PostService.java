@@ -80,23 +80,34 @@ public class PostService {
                 .findByTitleContainsIgnoreCaseAndPublishedIsTrue(title));
     }
 
-    public List<PostDTO> searchPostsByUserId(Long userId) {
-        return PostMapper.INSTANCE.toDTOs(postRepository
-                .findByAppUserIdAndPublishedIsTrue(userId));
+    public PostPageDTO searchPostsByUserId(Long userId, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Page<Post> posts = postRepository.findAllByAppUserIdAndPublishedIsTrue(userId, pageable);
+        List<PostDTO> postDTOs = PostMapper.INSTANCE.toDTOs(posts.getContent());
+        return new PostPageDTO(posts.getTotalPages(), postDTOs);
     }
 
-    public List<PostDTO> searchPostsByTitleAndUserId(String title, Long userId) {
-        if (title == null && userId == null) {
-            return null;//getAll();
+    /*
+    public PostPageDTO searchPostsByTitleAndCategoryId(String title, Long categoryId, int page, int size, String sortBy) {
+        if (title == null && ca== null) {
+            return getAll(page, size, sortBy);
         }
         else if (title == null) {
-            return searchPostsByUserId(userId);
+            return searchPostsByUserId(userId, page, size, sortBy);
         }
         else if (userId == null) {
             return searchPostsByTitle(title);
         }
         return PostMapper.INSTANCE.toDTOs(postRepository
                 .findByTitleContainsIgnoreCaseAndAppUserIdAndPublishedIsTrue(title, userId));
+    }
+     */
+
+    public PostPageDTO searchByTitle(String title, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Page<Post> posts = postRepository.findAllByTitleContainsIgnoreCaseAndPublishedIsTrue(title, pageable);
+        List<PostDTO> postDTOs = PostMapper.INSTANCE.toDTOs(posts.getContent());
+        return new PostPageDTO(posts.getTotalPages(), postDTOs);
     }
 
     public PostDTO switchPostPublishStatus(Long id) {

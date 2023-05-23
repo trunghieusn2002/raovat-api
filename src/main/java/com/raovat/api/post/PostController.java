@@ -55,9 +55,13 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    public List<PostDTO> searchPostsByTitleAndUserId(@RequestParam(value = "title", required = false) String title,
-                                                     @RequestParam(value = "userId", required = false) Long userId) {
-        return postService.searchPostsByTitleAndUserId(title, userId);
+    public ResponseEntity<PostPageDTO> searchPostsByTitleAndCategoryId(
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "title") String sortBy
+    ) {
+        return ResponseEntity.ok(postService.searchByTitle(title, page, size, sortBy));
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
