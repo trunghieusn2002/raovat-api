@@ -18,7 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,7 +29,6 @@ import java.util.stream.Collectors;
 public class PostService {
 
     private final String POST_NOT_FOUND = "Post with id %s not found";
-    private final JwtService jwtService;
     private final AppUserService appUserService;
     private final PostRepository postRepository;
     private final CategoryService categoryService;
@@ -39,8 +37,8 @@ public class PostService {
     public PostPageDTO getAll(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         Page<Post> posts = postRepository.findAllByPublishedIsTrue(pageable);
-        Page<PostDTO> postDTOPage = posts.map(PostMapper.INSTANCE::toDTO);
-        return new PostPageDTO(postDTOPage.getTotalPages(), postDTOPage);
+        List<PostDTO> postDTOs = PostMapper.INSTANCE.toDTOs(posts.getContent());
+        return new PostPageDTO(posts.getTotalPages(), postDTOs);
     }
 
     public PostDTO getById(Long id) {
@@ -48,29 +46,18 @@ public class PostService {
     }
 
     public PostDTO create(HttpServletRequest request, CreatePostDTO createPostDTO) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String refreshToken;
-        final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-            return null;
-        }
-        refreshToken = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(refreshToken);
-        if (userEmail != null) {
-            AppUser user = appUserService.findByEmail(userEmail);
-            Post post = PostMapper.INSTANCE.toEntity(createPostDTO);
-            post.setCategory(categoryService.findById(createPostDTO.categoryId()));
-            post.setAppUser(user);
-            post.setPostDate(LocalDateTime.now());
-            createPostDTO.imageIds().forEach(id -> {
-                post.addPostImage(PostImage.builder()
-                        .image(Image.builder().id(id).build())
-                        .post(post)
-                        .build());
-            });
-            return PostMapper.INSTANCE.toDTO(postRepository.save(post));
-        }
-        return null;
+        AppUser appUser = appUserService.getCurrentUser(request);
+        Post post = PostMapper.INSTANCE.toEntity(createPostDTO);
+        post.setCategory(categoryService.findById(createPostDTO.categoryId()));
+        post.setAppUser(appUser);
+        post.setPostDate(LocalDateTime.now());
+        createPostDTO.imageIds().forEach(id -> {
+        post.addPostImage(PostImage.builder()
+            .image(Image.builder().id(id).build())
+            .post(post)
+            .build());
+        });
+        return PostMapper.INSTANCE.toDTO(postRepository.save(post));
     }
 
     public PostDTO update(Long id, PostDTO postDTO) {
@@ -79,9 +66,8 @@ public class PostService {
         return PostMapper.INSTANCE.toDTO(postRepository.save(post));
     }
 
-    public String delete(Long id) {
+    public void delete(Long id) {
         postRepository.deleteById(id);
-        return "Success";
     }
 
     public Post findById(Long id) {
@@ -120,19 +106,9 @@ public class PostService {
     }
 
     public List<PostDTO> getByUser(HttpServletRequest request) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String refreshToken;
-        final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-            return null;
-        }
-        refreshToken = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(refreshToken);
-        if (userEmail != null) {
-            List<Post> posts = postRepository.findByAppUserEmail(userEmail);
-            return PostMapper.INSTANCE.toDTOs(posts);
-        }
-        return null;
+        AppUser appUser = appUserService.getCurrentUser(request);
+        List<Post> posts = postRepository.findByAppUserEmail(appUser.getEmail());
+        return PostMapper.INSTANCE.toDTOs(posts);
     }
 
     public List<PostDTO> searchByCategory(Long categoryId) {
@@ -140,24 +116,13 @@ public class PostService {
     }
 
     public List<PostDTO> getByFollowed(HttpServletRequest request) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String refreshToken;
-        final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-            return null;
-        }
-        refreshToken = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(refreshToken);
-        if (userEmail != null) {
-            AppUser appUser = appUserService.findByEmail(userEmail);
-            List<WatchList> watchLists = watchListService.findByAppUserEmail(userEmail);
+        AppUser appUser = appUserService.getCurrentUser(request);
+        List<WatchList> watchLists = watchListService.findByAppUserEmail(appUser.getEmail());
 
-            List<Post> followedPosts = watchLists.stream()
-                    .map(WatchList::getPost)
-                    .collect(Collectors.toList());
+        List<Post> followedPosts = watchLists.stream()
+            .map(WatchList::getPost)
+            .collect(Collectors.toList());
 
-            return PostMapper.INSTANCE.toDTOs(followedPosts);
-        }
-        return null;
+        return PostMapper.INSTANCE.toDTOs(followedPosts);
     }
 }

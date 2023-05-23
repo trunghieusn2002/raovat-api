@@ -1,6 +1,6 @@
 package com.raovat.api.post.dto;
 
-import org.springframework.data.domain.Page;
+import java.util.List;
 
-public record PostPageDTO(int totalPages, Page<PostDTO> posts) {
+public record PostPageDTO(int totalPages, List<PostDTO> posts) {
 }
