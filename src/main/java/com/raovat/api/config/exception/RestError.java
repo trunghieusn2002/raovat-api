@@ -1,4 +1,4 @@
 package com.raovat.api.config.exception;
 
-public record RestError(String status, String message) {
+public record RestError(int status, String error, String message, String path) {
 }

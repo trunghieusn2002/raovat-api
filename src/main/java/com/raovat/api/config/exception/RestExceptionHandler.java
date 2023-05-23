@@ -1,5 +1,6 @@
 package com.raovat.api.config.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -9,67 +10,83 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException exception, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new RestError(
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.toString().substring(4),
+                        exception.getMessage(),
+                        request.getRequestURI())
+        );
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException exception) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("Timestamp", LocalDateTime.now());
-        body.put("Message", exception.getMessage());
-
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    public ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException exception, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new RestError(
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.toString().substring(4),
+                        exception.getMessage(),
+                        request.getRequestURI())
+        );
     }
 
     @ExceptionHandler(EmailAlreadyExistException.class)
-    public ResponseEntity<Object> handleEmailAlreadyExistException(EmailAlreadyExistException exception) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("Timestamp", LocalDateTime.now());
-        body.put("Message", exception.getMessage());
-
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> handleEmailAlreadyExistException(EmailAlreadyExistException exception, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new RestError(
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.toString().substring(4),
+                        exception.getMessage(),
+                        request.getRequestURI())
+        );
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<Object> handleDuplicateResourceException(DuplicateResourceException exception) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("Timestamp", LocalDateTime.now());
-        body.put("Message", exception.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> handleDuplicateResourceException(DuplicateResourceException exception, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new RestError(
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.toString().substring(4),
+                        exception.getMessage(),
+                        request.getRequestURI())
+        );
     }
 
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<Object> handleIllegalStateException(IllegalStateException exception) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("Timestamp", LocalDateTime.now());
-        body.put("Message", exception.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> handleIllegalStateException(IllegalStateException exception, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new RestError(
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.toString().substring(4),
+                        exception.getMessage(),
+                        request.getRequestURI())
+        );
     }
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseBody
-    public ResponseEntity<RestError> handleAuthenticationException(Exception ex) {
-
-        RestError re = new RestError(HttpStatus.UNAUTHORIZED.toString(),
-                "Authentication failed at controller advice");
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(re);
+    public ResponseEntity<RestError> handleAuthenticationException(Exception exception, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                new RestError(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        HttpStatus.UNAUTHORIZED.toString().substring(4),
+                        "Authentication failed at controller advice",
+                        request.getRequestURI())
+        );
     }
 
     @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<RestError> handleNullPointerException(Exception ex) {
-        RestError re = new RestError(HttpStatus.BAD_REQUEST.toString(), "Missing some field");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(re);
+    public ResponseEntity<RestError> handleNullPointerException(Exception exception, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new RestError(
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.toString().substring(4),
+                        "Missing some field",
+                        request.getRequestURI())
+        );
     }
 }
