@@ -96,4 +96,16 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 )
         );
     }
+
+    @ExceptionHandler(StackOverflowError.class)
+    public ResponseEntity<RestError> handleStackOverflowError(Exception exception, HttpServletRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new RestError(
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.toString().substring(4),
+                        "Stackoverflow",
+                        request.getRequestURI()
+                )
+        );
+    }
 }

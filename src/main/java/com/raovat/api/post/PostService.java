@@ -1,14 +1,13 @@
 package com.raovat.api.post;
 
 import com.raovat.api.appuser.AppUser;
+import com.raovat.api.appuser.AppUserRepository;
 import com.raovat.api.appuser.AppUserService;
+import com.raovat.api.post.dto.LikePostDTO;
 import com.raovat.api.category.CategoryService;
-import com.raovat.api.config.JwtService;
 import com.raovat.api.config.exception.ResourceNotFoundException;
 import com.raovat.api.image.Image;
 import com.raovat.api.post.postimage.PostImage;
-import com.raovat.api.post.watchlist.WatchList;
-import com.raovat.api.post.watchlist.WatchListService;
 import com.raovat.api.post.dto.CreatePostDTO;
 import com.raovat.api.post.dto.PostDTO;
 import com.raovat.api.post.dto.PostPageDTO;
@@ -21,8 +20,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +31,7 @@ public class PostService {
     private final AppUserService appUserService;
     private final PostRepository postRepository;
     private final CategoryService categoryService;
-    private final WatchListService watchListService;
+    private final AppUserRepository appUserRepository;
 
     public PostPageDTO getAll(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
@@ -87,22 +86,6 @@ public class PostService {
         return new PostPageDTO(posts.getTotalPages(), postDTOs);
     }
 
-    /*
-    public PostPageDTO searchPostsByTitleAndCategoryId(String title, Long categoryId, int page, int size, String sortBy) {
-        if (title == null && ca== null) {
-            return getAll(page, size, sortBy);
-        }
-        else if (title == null) {
-            return searchPostsByUserId(userId, page, size, sortBy);
-        }
-        else if (userId == null) {
-            return searchPostsByTitle(title);
-        }
-        return PostMapper.INSTANCE.toDTOs(postRepository
-                .findByTitleContainsIgnoreCaseAndAppUserIdAndPublishedIsTrue(title, userId));
-    }
-     */
-
     public PostPageDTO searchByTitle(String title, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         Page<Post> posts = postRepository.findAllByTitleContainsIgnoreCaseAndPublishedIsTrue(title, pageable);
@@ -116,24 +99,47 @@ public class PostService {
         return PostMapper.INSTANCE.toDTO(postRepository.save(post));
     }
 
-    public List<PostDTO> getByUser(HttpServletRequest request) {
+    public PostPageDTO getByUser(HttpServletRequest request, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         AppUser appUser = appUserService.getCurrentUser(request);
-        List<Post> posts = postRepository.findByAppUserEmail(appUser.getEmail());
-        return PostMapper.INSTANCE.toDTOs(posts);
+        Page<Post> posts = postRepository.findAllByAppUserEmail(appUser.getEmail(), pageable);
+        List<PostDTO> postDTOs = PostMapper.INSTANCE.toDTOs(posts.getContent());
+        return new PostPageDTO(posts.getTotalPages(), postDTOs);
     }
 
     public List<PostDTO> searchByCategory(Long categoryId) {
         return PostMapper.INSTANCE.toDTOs(postRepository.findByCategoryIdAndPublishedIsTrue(categoryId));
     }
 
-    public List<PostDTO> getByFollowed(HttpServletRequest request) {
+    public PostPageDTO getWatchList(HttpServletRequest request, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
         AppUser appUser = appUserService.getCurrentUser(request);
-        List<WatchList> watchLists = watchListService.findByAppUserEmail(appUser.getEmail());
 
-        List<Post> followedPosts = watchLists.stream()
-            .map(WatchList::getPost)
-            .collect(Collectors.toList());
+        List<Post> likedPosts = new ArrayList<>(appUser.getLikedPosts());
+        int totalPosts = likedPosts.size();
 
-        return PostMapper.INSTANCE.toDTOs(followedPosts);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), totalPosts);
+        List<Post> paginatedPosts = likedPosts.subList(start, end);
+
+        int totalPages = (int) Math.ceil((double) totalPosts / size);
+
+        return new PostPageDTO(totalPages, PostMapper.INSTANCE.toDTOs(paginatedPosts));
     }
+
+    public LikePostDTO likePost(HttpServletRequest request, Long id) {
+        AppUser appUser = appUserService.getCurrentUser(request);
+        Post post = findById(id);
+        appUser.getLikedPosts().add(post);
+        appUserRepository.save(appUser);
+        return new LikePostDTO(true);
+    }
+
+    public void unlikePost(HttpServletRequest request, Long id) {
+        AppUser appUser = appUserService.getCurrentUser(request);
+        Post post = findById(id);
+        appUser.getLikedPosts().remove(post);
+        appUserRepository.save(appUser);
+    }
+
 }

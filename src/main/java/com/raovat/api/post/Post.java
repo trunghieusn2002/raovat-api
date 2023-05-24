@@ -4,22 +4,18 @@ import com.raovat.api.appuser.AppUser;
 import com.raovat.api.category.Category;
 import com.raovat.api.post.postimage.PostImage;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"likes", "appUser", "category"})
+@EqualsAndHashCode(exclude = {"likes", "appUser", "category"})
 public class Post {
     @Id
     @SequenceGenerator(
@@ -39,20 +35,15 @@ public class Post {
     private String address;
     @Builder.Default
     private boolean published = true;
+    private LocalDateTime publishedAt;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<PostImage> postImages = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_post_relation",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @ManyToMany(mappedBy = "likedPosts", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
-    private Set<AppUser> appUsers = new HashSet<>();
-
+    private Set<AppUser> likes = new HashSet<>();
 
     public void addPostImage(PostImage postImage) {
         postImages.add(postImage);
@@ -64,7 +55,7 @@ public class Post {
         postImage.setPost(null);
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "app_user_id", referencedColumnName = "id")
     private AppUser appUser;
 

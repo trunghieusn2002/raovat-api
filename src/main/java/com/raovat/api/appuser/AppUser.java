@@ -46,8 +46,13 @@ public class AppUser implements UserDetails {
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private Image image;
 
-    @ManyToMany(mappedBy = "appUsers")
-    private Set<Post> followedPosts;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "post_like",
+            joinColumns = @JoinColumn(name = "app_user_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id"))
+    @Builder.Default
+    private Set<Post> likedPosts = new HashSet<>();
 
     public AppUser(String firstName,
                    String lastName,

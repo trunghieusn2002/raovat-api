@@ -6,7 +6,6 @@ import com.raovat.api.post.dto.PostPageDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,6 @@ public class PostController {
 
     private final PostService postService;
 
-    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping
     public ResponseEntity<PostPageDTO> getAll(
             @RequestParam(defaultValue = "0") int page,
@@ -71,20 +69,9 @@ public class PostController {
     }
 
     @SecurityRequirement(name = "Bearer Authentication")
-    @GetMapping("/user")
-    public ResponseEntity<List<PostDTO>> getByUser(HttpServletRequest request) {
-        return ResponseEntity.ok(postService.getByUser(request));
-    }
-
-    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/category")
     public ResponseEntity<List<PostDTO>> searchByCategory(@RequestParam(value = "categoryId") Long categoryId) {
         return ResponseEntity.ok(postService.searchByCategory(categoryId));
     }
 
-    @SecurityRequirement(name = "Bearer Authentication")
-    @GetMapping("/followed")
-    public ResponseEntity<List<PostDTO>> getByFollowed(HttpServletRequest request) {
-        return ResponseEntity.ok(postService.getByFollowed(request));
-    }
 }
