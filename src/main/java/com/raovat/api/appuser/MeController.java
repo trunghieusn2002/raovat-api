@@ -1,6 +1,8 @@
 package com.raovat.api.appuser;
 
 import com.raovat.api.appuser.dto.AppUserDTO;
+import com.raovat.api.auth.AuthenticationService;
+import com.raovat.api.auth.ChangePasswordRequest;
 import com.raovat.api.post.dto.LikePostDTO;
 import com.raovat.api.post.PostService;
 import com.raovat.api.post.dto.PostPageDTO;
@@ -18,6 +20,7 @@ public class MeController {
 
     private final AppUserService appUserService;
     private final PostService postService;
+    private final AuthenticationService authenticationService;
 
     @GetMapping
     public AppUserDTO get(HttpServletRequest request) {
@@ -60,4 +63,8 @@ public class MeController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(HttpServletRequest request, @RequestBody ChangePasswordRequest changePasswordRequest) {
+        return ResponseEntity.ok(authenticationService.changePassword(request, changePasswordRequest));
+    }
 }

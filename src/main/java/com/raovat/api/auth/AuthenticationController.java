@@ -1,6 +1,5 @@
 package com.raovat.api.auth;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -53,9 +52,4 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.newPassword(password, token));
     }
 
-    @SecurityRequirement(name = "Bearer Authentication")
-    @PostMapping("/change-password")
-    public ResponseEntity<String> changePassword(HttpServletRequest request, @RequestBody ChangePasswordRequest changePasswordRequest) {
-        return ResponseEntity.ok(authenticationService.changePassword(request, changePasswordRequest));
-    }
 }
