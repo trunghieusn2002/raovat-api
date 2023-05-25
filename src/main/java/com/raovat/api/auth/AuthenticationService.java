@@ -16,7 +16,9 @@ import com.raovat.api.token.TokenRepository;
 import com.raovat.api.token.TokenType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,6 +34,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
+    @Value("${server.base.url}")
+    private String baseUrl;
 
     private final AppUserRepository appUserRepository;
     private final JwtService jwtService;
@@ -44,6 +48,7 @@ public class AuthenticationService {
     private final EmailSender emailSender;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        emailValidator.test(request.getEmail());
         var user = AppUser.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -70,18 +75,18 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        emailValidator.test(request.getEmail());
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-        var user = appUserRepository.findByEmail(request.getEmail())
-                .orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        revokeAllUserTokens(user);
-        saveUserToken(user, jwtToken);
+        AppUser appUser = appUserService.findByEmail(request.getEmail());
+        var jwtToken = jwtService.generateToken(appUser);
+        var refreshToken = jwtService.generateRefreshToken(appUser);
+        revokeAllUserTokens(appUser);
+        saveUserToken(appUser, jwtToken);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -95,10 +100,7 @@ public class AuthenticationService {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
         final String userEmail;
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-            return;
-        }
-        refreshToken = authHeader.substring(7);
+        refreshToken = jwtService.extractToken(authHeader);
         userEmail = jwtService.extractUsername(refreshToken);
         if (userEmail != null) {
             var user = this.appUserRepository.findByEmail(userEmail)
@@ -144,10 +146,8 @@ public class AuthenticationService {
         final String email = jwtService.extractUsername(token);
         if (email != null) {
             AppUser appUser = appUserService.findByEmail(email);
-
             String currentPassword = changePasswordRequest.currentPassword();
             String newPassword = changePasswordRequest.newPassword();
-
             if (passwordEncoder.matches(currentPassword, appUser.getPassword())) {
                 String encodedPassword = passwordEncoder.encode(newPassword);
                 appUser.setPassword(encodedPassword);
@@ -162,9 +162,7 @@ public class AuthenticationService {
 
     public String forgetPassword(String email) {
         emailValidator.test(email);
-
         AppUser appUser = appUserService.findByEmail(email);
-
         String token = UUID.randomUUID().toString();
         ResetPasswordToken resetPasswordToken = new ResetPasswordToken(
                 token,
@@ -173,14 +171,11 @@ public class AuthenticationService {
                 appUser
         );
         resetPasswordTokenService.saveConfirmationToken(resetPasswordToken);
-
-        String link = "http://localhost:8080/api/v1/auth/confirm?token=" + token;
-
+        String link = baseUrl + "/api/v1/auth/confirm?token=" + token;
         emailSender.send(
                 email,
                 buildEmail(appUser.getFirstName(), link)
         );
-
         return "Success";
     }
 
@@ -191,15 +186,11 @@ public class AuthenticationService {
         if (resetPasswordToken.getConfirmedAt() != null) {
             throw new IllegalStateException("Email already confirmed");
         }
-
         LocalDateTime expiredAt = resetPasswordToken.getExpiresAt();
-
         if (expiredAt.isBefore(LocalDateTime.now())) {
             throw new IllegalStateException("Token expired");
         }
-
         AppUser appUser = resetPasswordToken.getAppUser();
-
         resetPasswordTokenService.setConfirmedAt(token);
         var jwtToken = jwtService.generateToken(appUser);
         var refreshToken = jwtService.generateRefreshToken(appUser);

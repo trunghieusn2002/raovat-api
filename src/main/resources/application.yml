@@ -1,4 +1,6 @@
 server:
+  base:
+    url: https://rao-vat-api.herokuapp.com
   error:
     include-message: always
     include-binding-errors: always
