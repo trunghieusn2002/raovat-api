@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("api/v1/post")
 @RequiredArgsConstructor
@@ -27,7 +25,6 @@ public class PostController {
         return ResponseEntity.ok(postService.getAll(page, size, sortBy));
     }
 
-    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping(path = "/{id}")
     public ResponseEntity<PostDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(postService.getById(id));
@@ -68,10 +65,14 @@ public class PostController {
         return ResponseEntity.ok(postService.switchPostPublishStatus(id));
     }
 
-    @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/category")
-    public ResponseEntity<List<PostDTO>> searchByCategory(@RequestParam(value = "categoryId") Long categoryId) {
-        return ResponseEntity.ok(postService.searchByCategory(categoryId));
+    public ResponseEntity<PostPageDTO> searchByCategory(
+            @RequestParam(value = "categoryId") Long categoryId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "title") String sortBy
+    ) {
+        return ResponseEntity.ok(postService.searchByCategory(categoryId, page, size, sortBy));
     }
 
 }

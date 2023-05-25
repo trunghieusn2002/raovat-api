@@ -107,8 +107,11 @@ public class PostService {
         return new PostPageDTO(posts.getTotalPages(), postDTOs);
     }
 
-    public List<PostDTO> searchByCategory(Long categoryId) {
-        return PostMapper.INSTANCE.toDTOs(postRepository.findByCategoryIdAndPublishedIsTrue(categoryId));
+    public PostPageDTO searchByCategory(Long categoryId, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Page<Post> posts = postRepository.findAllByCategoryIdAndPublishedIsTrue(categoryId, pageable);
+        List<PostDTO> postDTOs = PostMapper.INSTANCE.toDTOs(posts.getContent());
+        return new PostPageDTO(posts.getTotalPages(), postDTOs);
     }
 
     public PostPageDTO getWatchList(HttpServletRequest request, int page, int size, String sortBy) {

@@ -20,6 +20,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByAppUserEmail(String email, Pageable pageable);
 
     List<Post> findByCategoryIdAndPublishedIsTrue(Long categoryId);
+    Page<Post> findAllByCategoryIdAndPublishedIsTrue(Long categoryId, Pageable pageable);
 
     List<Post> findByTitleContainsIgnoreCase(String title);
     List<Post> findByTitleContainsIgnoreCaseAndPublishedIsTrue(String title);
