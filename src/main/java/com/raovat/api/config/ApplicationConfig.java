@@ -1,5 +1,6 @@
 package com.raovat.api.config;
 
+import com.cloudinary.Cloudinary;
 import com.raovat.api.appuser.AppUserRepository;
 import com.raovat.api.config.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
@@ -50,6 +53,15 @@ public class ApplicationConfig implements WebMvcConfigurer {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public Cloudinary cloudinary() {
+        Map config = new HashMap();
+        config.put("cloud_name", "dtaof4ayf");
+        config.put("api_key", "858818336198751");
+        config.put("api_secret", "TfPLXYE1T2X5M-hsaHfFJ6W6GUU");
+        return new Cloudinary(config);
     }
 
     //Need to fix later

@@ -1,11 +1,14 @@
 package com.raovat.api.image;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.raovat.api.config.exception.ResourceNotFoundException;
 import com.raovat.api.image.dto.CreateImageDTO;
 import com.raovat.api.image.dto.ImageDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -27,6 +31,7 @@ public class ImageService {
 
     private final static String IMAGE_NOT_FOUND = "Image with id %s not found";
     private final ImageRepository imageRepository;
+    private final Cloudinary cloudinary;
 
     public ImageDTO uploadFileHeroku(HttpServletRequest request, MultipartFile file) throws IOException {
         Path uploadPath = Paths.get(System.getProperty("user.dir"), "uploads");
@@ -140,5 +145,46 @@ public class ImageService {
         return imageRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(String.format(IMAGE_NOT_FOUND, id)));
+    }
+
+    public ImageDTO uploadFileCloud(MultipartFile file) throws IOException {
+        // Kiểm tra nếu file là ảnh
+        boolean isImage = file.getContentType().startsWith("image/");
+        if (isImage) {
+            // Đọc dữ liệu của file vào một mảng byte
+            byte[] fileData = file.getBytes();
+            // Tạo một đối tượng BufferedImage từ dữ liệu của file
+            BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(fileData));
+            // Thiết lập kích thước mới cho ảnh (full HD)
+            int newWidth = 1920;
+            int newHeight = 1080;
+            // Kiểm tra kích thước của ảnh
+            boolean isLargeImage = originalImage != null && originalImage.getWidth() > newWidth && originalImage.getHeight() > newHeight;
+            // Nếu ảnh lớn hơn kích thước cho phép, resize ảnh
+            if (isLargeImage) {
+                // Tạo một đối tượng BufferedImage mới với kích thước mới và vẽ ảnh gốc lên đó
+                BufferedImage resizedImage = new BufferedImage(newWidth, newHeight, originalImage.getType());
+                Graphics2D g2d = resizedImage.createGraphics();
+                g2d.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
+                g2d.dispose();
+
+                // Chuyển đổi ảnh mới thành mảng byte
+                ByteArrayOutputStream newImageBytes = new ByteArrayOutputStream();
+                ImageIO.write(resizedImage, "jpg", newImageBytes);
+                fileData = newImageBytes.toByteArray();
+            }
+            // Upload file lên Cloudinary
+            Map uploadResult = cloudinary.uploader().upload(fileData, ObjectUtils.emptyMap());
+            // Trả về URL của file đã upload
+            String url = (String) uploadResult.get("url");
+            return ImageMapper.INSTANCE.toDTO(
+                    imageRepository.save(new Image(file.getOriginalFilename(), url)));
+        } else {
+            // Trường hợp file không phải là ảnh, upload file thẳng lên Cloudinary
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            String url = ((String) uploadResult.get("url")).replace("http", "https");
+            return ImageMapper.INSTANCE.toDTO(
+                    imageRepository.save(new Image(file.getOriginalFilename(), url)));
+        }
     }
 }

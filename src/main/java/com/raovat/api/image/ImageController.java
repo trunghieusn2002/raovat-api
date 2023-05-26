@@ -1,5 +1,6 @@
 package com.raovat.api.image;
 
+import com.cloudinary.Cloudinary;
 import com.raovat.api.image.dto.CreateImageDTO;
 import com.raovat.api.image.dto.ImageDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -38,5 +39,10 @@ public class ImageController {
     @DeleteMapping("/local/{publicId}")
     public ResponseEntity<String> deleteFileLocal(@PathVariable String publicId) {
         return ResponseEntity.ok(imageService.deleteFileLocal(publicId));
+    }
+
+    @PostMapping(value = "/cloud/upload", consumes = "multipart/form-data")
+    public ResponseEntity<ImageDTO> uploadFileCloud(@RequestPart("file") MultipartFile file) throws IOException {
+        return ResponseEntity.ok(imageService.uploadFileCloud(file));
     }
 }
