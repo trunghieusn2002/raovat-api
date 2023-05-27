@@ -2,5 +2,5 @@ package com.raovat.api.appuser.dto;
 
 import com.raovat.api.image.dto.ImageDTO;
 
-public record AppUserDTO(String firstName, String lastName, String email, String phone, ImageDTO imageDTO) {
+public record AppUserDTO(String firstName, String lastName, String email, String phone) {
 }
