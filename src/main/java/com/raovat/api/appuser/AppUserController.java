@@ -17,7 +17,7 @@ public class AppUserController {
     private final AppUserService appUserService;
 
     @CrossOrigin
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<AppUserDTO> get(HttpServletRequest request) {
         return ResponseEntity.ok(appUserService.get(request));
     }
@@ -29,7 +29,7 @@ public class AppUserController {
     }
 
     @CrossOrigin
-    @PatchMapping()
+    @PatchMapping("/")
     public ResponseEntity<AppUserDTO> update(HttpServletRequest request, AppUserDTO appUserDTO) {
         return ResponseEntity.ok(appUserService.update(request, appUserDTO));
     }
