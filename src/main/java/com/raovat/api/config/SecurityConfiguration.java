@@ -12,10 +12,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@CrossOrigin
 public class SecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
