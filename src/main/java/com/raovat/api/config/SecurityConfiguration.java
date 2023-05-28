@@ -33,33 +33,23 @@ public class SecurityConfiguration {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers(
-                        "/api/v1/auth/**",
-                        "/swagger-ui/**",
-                        "/swagger-resources/**",
-                        "/v3/api-docs/**",
-                        "/uploads/**",
-                        "/api/v1/post/search",
-                        "/api/v1/post",
-                        "/api/v1/post/category",
-                        "/api/v1/category"
-                )
+                .requestMatchers("/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout()
-                .logoutUrl("/api/v1/auth/logout")
-                .addLogoutHandler(logoutHandler)
-                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(myAuthenticationEntryPoint)
+//                .and()
+//                .authenticationProvider(authenticationProvider)
+//                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+//                .logout()
+//                .logoutUrl("/api/v1/auth/logout")
+//                .addLogoutHandler(logoutHandler)
+//                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+//                .and()
+//                .exceptionHandling()
+//                .authenticationEntryPoint(myAuthenticationEntryPoint)
         ;
 
         return http.build();
