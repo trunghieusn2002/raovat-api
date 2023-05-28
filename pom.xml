@@ -102,6 +102,11 @@
 			<artifactId>cloudinary-http44</artifactId>
 			<version>1.31.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>32.0.0-jre</version>
+		</dependency>
 	</dependencies>
 
 	<build>
