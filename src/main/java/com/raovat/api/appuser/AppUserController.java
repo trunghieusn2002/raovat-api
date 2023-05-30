@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
 @RestController
 @RequestMapping("api/v1/app-user")
 @RequiredArgsConstructor
@@ -16,17 +15,20 @@ public class AppUserController {
 
     private final AppUserService appUserService;
 
+
     @GetMapping
     public ResponseEntity<AppUserDTO> get(HttpServletRequest request) {
         return ResponseEntity.ok(appUserService.get(request));
     }
+
 
     @GetMapping("/{email}")
     public ResponseEntity<AppUserDTO> getByEmail(@PathVariable String email) {
         return ResponseEntity.ok(appUserService.getByEmail(email));
     }
 
-    @PatchMapping()
+
+    @PatchMapping
     public ResponseEntity<AppUserDTO> update(HttpServletRequest request, AppUserDTO appUserDTO) {
         return ResponseEntity.ok(appUserService.update(request, appUserDTO));
     }
