@@ -87,7 +87,7 @@ public class PostService {
         if (optionalPost.isPresent()) {
             Post post = optionalPost.get();
 
-            if (post.getAppUser().equals(appUser)) {
+            if (post.getAppUser().equals(appUser) || AppUserRole.ADMIN.equals(appUser.getAppUserRole())) {
                 postRepository.deleteById(id);
             } else {
                 throw new ResourceNotFoundException("You do not have permission to delete this post.");
