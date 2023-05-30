@@ -2,15 +2,13 @@ package com.raovat.api.post;
 
 import com.raovat.api.appuser.AppUser;
 import com.raovat.api.appuser.AppUserRepository;
+import com.raovat.api.appuser.AppUserRole;
 import com.raovat.api.appuser.AppUserService;
-import com.raovat.api.post.dto.LikePostDTO;
+import com.raovat.api.post.dto.*;
 import com.raovat.api.category.CategoryService;
 import com.raovat.api.config.exception.ResourceNotFoundException;
 import com.raovat.api.image.Image;
 import com.raovat.api.post.postimage.PostImage;
-import com.raovat.api.post.dto.CreatePostDTO;
-import com.raovat.api.post.dto.PostDTO;
-import com.raovat.api.post.dto.PostPageDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,8 +31,16 @@ public class PostService {
     private final CategoryService categoryService;
     private final AppUserRepository appUserRepository;
 
-    public PostPageDTO getAll(int page, int size, String sortBy) {
+    public PostPageDTO getAll(HttpServletRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+
+        AppUser appUser = appUserService.getCurrentUser(request);
+        if (AppUserRole.ADMIN.equals(appUser.getAppUserRole())) {
+            Page<Post> posts = postRepository.findAll(pageable);
+            List<PostDTO> postDTOs = PostMapper.INSTANCE.toDTOs(posts.getContent());
+            return new PostPageDTO(posts.getTotalPages(), postDTOs);
+        }
+
         Page<Post> posts = postRepository.findAllByPublishedIsTrue(pageable);
         List<PostDTO> postDTOs = PostMapper.INSTANCE.toDTOs(posts.getContent());
         return new PostPageDTO(posts.getTotalPages(), postDTOs);
@@ -143,6 +149,26 @@ public class PostService {
         Post post = findById(id);
         appUser.getLikedPosts().remove(post);
         appUserRepository.save(appUser);
+    }
+
+    public PublishPostDTO publishPost(HttpServletRequest request, Long id) {
+        AppUser appUser = appUserService.getCurrentUser(request);
+        if (AppUserRole.ADMIN.equals(appUser.getAppUserRole())) {
+            Post post = findById(id);
+            post.setPublished(true);
+            postRepository.save(post);
+            return new PublishPostDTO(true);
+        }
+        return new PublishPostDTO(false);
+    }
+
+    public void unPublishPost(HttpServletRequest request, Long id) {
+        AppUser appUser = appUserService.getCurrentUser(request);
+        if (AppUserRole.ADMIN.equals(appUser.getAppUserRole())) {
+            Post post = findById(id);
+            post.setPublished(false);
+            postRepository.save(post);
+        }
     }
 
 }
