@@ -56,8 +56,8 @@ public class PostController {
 
     @SecurityRequirement(name = "Bearer Authentication")
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Object> delete(@PathVariable Long id) {
-        postService.delete(id);
+    public ResponseEntity<Object> delete(HttpServletRequest request, @PathVariable Long id) {
+        postService.delete(request, id);
         return ResponseEntity.noContent().build();
     }
 

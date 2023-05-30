@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -79,8 +80,21 @@ public class PostService {
         return PostMapper.INSTANCE.toDTO(postRepository.save(post));
     }
 
-    public void delete(Long id) {
-        postRepository.deleteById(id);
+    public void delete(HttpServletRequest request, Long id) {
+        AppUser appUser = appUserService.getCurrentUser(request);
+        Optional<Post> optionalPost = postRepository.findById(id);
+
+        if (optionalPost.isPresent()) {
+            Post post = optionalPost.get();
+
+            if (post.getAppUser().equals(appUser)) {
+                postRepository.deleteById(id);
+            } else {
+                throw new ResourceNotFoundException("You do not have permission to delete this post.");
+            }
+        } else {
+            throw new ResourceNotFoundException("Post not found.");
+        }
     }
 
     public Post findById(Long id) {
