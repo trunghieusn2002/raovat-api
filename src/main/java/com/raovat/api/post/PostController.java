@@ -19,6 +19,16 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<PostPageDTO> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "title") String sortBy
+    ) {
+        return ResponseEntity.ok(postService.getAll(page, size, sortBy));
+    }
+
+    @SecurityRequirement(name = "Bearer Authentication")
+    @GetMapping("/admin")
+    public ResponseEntity<PostPageDTO> getAll(
             HttpServletRequest request,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -77,6 +87,7 @@ public class PostController {
         return ResponseEntity.ok(postService.searchByCategory(categoryId, page, size, sortBy));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @PatchMapping("/published/{id}")
     public ResponseEntity<PublishPostDTO> publishPost(
             HttpServletRequest request,
@@ -85,6 +96,7 @@ public class PostController {
         return ResponseEntity.ok(postService.publishPost(request, id));
     }
 
+    @SecurityRequirement(name = "Bearer Authentication")
     @DeleteMapping("/published/{id}")
     public ResponseEntity<PublishPostDTO> unPublishPost(
             HttpServletRequest request,

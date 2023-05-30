@@ -31,6 +31,13 @@ public class PostService {
     private final CategoryService categoryService;
     private final AppUserRepository appUserRepository;
 
+    public PostPageDTO getAll(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Page<Post> posts = postRepository.findAllByPublishedIsTrue(pageable);
+        List<PostDTO> postDTOs = PostMapper.INSTANCE.toDTOs(posts.getContent());
+        return new PostPageDTO(posts.getTotalPages(), postDTOs);
+    }
+
     public PostPageDTO getAll(HttpServletRequest request, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
 
