@@ -47,10 +47,11 @@ public class PostService {
             List<PostDTO> postDTOs = PostMapper.INSTANCE.toDTOs(posts.getContent());
             return new PostPageDTO(posts.getTotalPages(), postDTOs);
         }
+        return null;
 
-        Page<Post> posts = postRepository.findAllByPublishedIsTrue(pageable);
-        List<PostDTO> postDTOs = PostMapper.INSTANCE.toDTOs(posts.getContent());
-        return new PostPageDTO(posts.getTotalPages(), postDTOs);
+        //Page<Post> posts = postRepository.findAllByPublishedIsTrue(pageable);
+        //List<PostDTO> postDTOs = PostMapper.INSTANCE.toDTOs(posts.getContent());
+        //return new PostPageDTO(posts.getTotalPages(), postDTOs);
     }
 
     public PostDTO getById(Long id) {

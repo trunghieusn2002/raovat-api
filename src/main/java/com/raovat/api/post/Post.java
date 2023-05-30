@@ -41,7 +41,7 @@ public class Post {
     @Builder.Default
     private List<PostImage> postImages = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "likedPosts", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "likedPosts", fetch = FetchType.LAZY /*, cascade = CascadeType.ALL*/)
     @Builder.Default
     private Set<AppUser> likes = new HashSet<>();
 
@@ -55,7 +55,7 @@ public class Post {
         postImage.setPost(null);
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY /*, cascade = CascadeType.ALL*/)
     @JoinColumn(name = "app_user_id", referencedColumnName = "id")
     private AppUser appUser;
 
